@@ -29,20 +29,7 @@ class call //класс - поступающий звонок
     int ctype; //кому нужна помощь (1-взрослому человеку, 2-ребенку, 3-пожилому человеку)
     int cserv; //какая необходима помощь (1-оказать первую помощь, 2-довести до больницы)
   public:
-    call()
-    {
-      float a,b;
-      cout<<"Введите местоположение пациента"<<endl;
-      cout<<"X: ";
-      cin>>a;
-      cout<<"Y: ";
-      cin>>b;
-      cloc.set_coord(a,b);
-      cout<<"Введите тип пациента (1-обычный человек, 2-ребенок, 3-пенсионер):"<<endl;
-      cin>>ctype;
-      cout<<"Введите тип необходимой помощи (1-оказать первую помощь, 2-довести до больницы):"<<endl;
-      cin>>cserv;
-    }
+    call();
     coord get_cloc() const { return cloc; }
     int get_ctype() const { return ctype; }
     int get_cserv() const { return cserv; }

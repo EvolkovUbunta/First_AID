@@ -4,6 +4,33 @@
 #include <ctime>
 using namespace std;
 
+int inp(int &a)	//кошерный ввод числа с проверкой (будет просить ввести, пока не напишешь по нормальному), аргумент-число, которое нужно ввести
+//возвращает введеное число
+{
+  cin>>a;
+  while (cin.fail())
+  {
+    cout<<"Некорректный ввод, попробуйте еще раз"<<endl;
+    cin.clear();
+    cin.ignore();
+    cin>>a;
+  }
+  return a;
+}
+
+float inp(float &a)
+{
+  cin>>a;
+  while (cin.fail())
+  {
+    cout<<"Некорректный ввод, попробуйте еще раз"<<endl;
+    cin.clear();
+    cin.ignore();
+    cin>>a;
+  }
+  return a;
+}
+
 float coord::def_dis(const coord &a) //определение расстояния для стационарной точки
 {
   float k=a.x;
@@ -12,10 +39,37 @@ float coord::def_dis(const coord &a) //определение расстояни
   return p;
 }
 
+call::call()
+{
+  float a,b;
+  cout<<"Введите местоположение пациента"<<endl;
+  cout<<"X: ";
+  inp(a);
+  cout<<"Y: ";
+  inp(b);
+  cloc.set_coord(a,b);
+  cout<<"Введите тип пациента (1-обычный человек, 2-ребенок, 3-пенсионер):"<<endl;
+  while(1)
+  {
+    int l=inp(ctype);
+    if (l==1 || l==2 || l==3) break;
+    else cout<<"Введите целое число от 1 до 3"<<endl;
+  }
+  cout<<"Введите тип необходимой помощи (1-оказать первую помощь, 2-довести до больницы):"<<endl;
+  cin>>cserv;
+  next=NULL;
+}
+                                                                      
+
 car::car()
 {
   cout<<"Введите тип машины (1-для обычного человека, 2-для ребенка, 3-для пенсионера):"<<endl;
-  cin>>type;
+  while(1)
+  {
+    int l=inp(type);
+    if (l==1 || l==2 || l==3) break;
+    else cout<<"Введите целое число от 1 до 3"<<endl;
+  } 
   switch(type)
   {	
     case 1:
@@ -33,9 +87,9 @@ car::car()
   float a,b;
   cout<<"Введите координаты машины по умолчанию:"<<endl;
   cout<<"X: ";
-  cin>>a;
+  inp(a);
   cout<<"Y: ";
-  cin>>b;
+  inp(b);
   loc_prim.set_coord(a,b);
   loc1.set_coord(a,b);
   loc2.set_coord(a,b);
@@ -46,12 +100,12 @@ car::car()
   next=NULL;
 }     
 
-coord car::get_loc_cur() //написать с равно, а то как лох
+coord car::get_loc_cur()
 {
   coord back;
   float dis,dis1;
   time_t t=time(NULL);
-  if (t>time1 && t<time2)
+  if (t>=time1 && t<time2)
   {
     dis=pow(pow(loc2.get_x()-loc1.get_x(),2)+pow(loc2.get_y()-loc1.get_y(),2),0.5);
     dis1=(t-time1)*sp/3600;
@@ -65,7 +119,7 @@ coord car::get_loc_cur() //написать с равно, а то как лох
   }
   else
   {
-    if (t>time2 && t<time)
+    if (t>=time2 && t<time)
     {
       dis=pow(pow(loc3.get_x()-loc2.get_x(),2)+pow(loc3.get_y()-loc2.get_y(),2),0.5);
       dis1=(t-time2)*sp/3600;
@@ -77,7 +131,7 @@ coord car::get_loc_cur() //написать с равно, а то как лох
     {
       dis=pow(pow(loc_prim.get_x()-loc3.get_x(),2)+pow(loc_prim.get_y()-loc3.get_y(),2),0.5);
       dis1=(t-time)*sp/3600;
-      if (dis1>dis) back.set_coord(loc_prim);
+      if (dis1>=dis) back.set_coord(loc_prim);
       else
       {
         float k=(dis1/dis)*loc_prim.get_x()+loc3.get_x()*(1-dis1/dis);
@@ -137,13 +191,6 @@ void car::move(const call &a, const control &ctrl)
   return;
 }
 
-int main()
-{
-  call ob1;
-  car ob2;
-  return 0;
-}
-
 car &choose(call &zvon, control &ctrl)
 {
   car *best; //лучшая машина (мы будем его возвращать
@@ -181,4 +228,28 @@ car &choose(call &zvon, control &ctrl)
     }
   }
   return *best;
+}
+
+int input_car(control &ctrl)
+{
+  while(1)
+  {
+    car *rex;
+    if ((&ctrl)->cbeg==NULL && (&ctrl)->cend==NULL) (&ctrl)->cbeg=rex;
+    else (&ctrl)->cend->next=rex;
+    (&ctrl)->cend=rex;
+    (&ctrl)->cend->next=NULL;
+    cout<<"Хотите добавить еще один элемент? (1-да/2-нет)"<<endl;
+    int a;
+    inp(a);
+    if (a==2) break;
+  }
+  return 0;
+}
+
+int main()
+{
+  call ob1;
+  car ob2;
+  return 0;
 }

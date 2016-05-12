@@ -6,8 +6,6 @@
 #define sp3 50
 using namespace std;
 
-class control;
-
 class coord
 {
     float x,y;
